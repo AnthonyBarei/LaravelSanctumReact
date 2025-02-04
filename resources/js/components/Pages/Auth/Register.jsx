@@ -9,11 +9,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Copyright from '../../Layouts/Copyright';
 // Auth
 import { useAuth } from '../../hooks/useAuth';
+// Translation
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
     const navigate = useNavigate();
     const { register } = useAuth();
     const [alert, setAlert] = React.useState(false);
+    const { t } = useTranslation();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -42,24 +45,24 @@ export default function Register() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign Up
+                    {t('sign_up')}
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                    <TextField margin="normal" required fullWidth id="firstname" label="Firstname" name="firstname" autoComplete="firstname" autoFocus size="small"/>
-                    <TextField margin="normal" required fullWidth id="lastname" label="lastname" name="lastname" autoComplete="lastname" autoFocus size="small"/>
-                    <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" size="small"/>
-                    <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" size="small"/>
-                    <TextField margin="normal" required fullWidth name="password_confirmation" label="Confirm Password" type="password" id="password_confirmation" autoComplete="current-password" size="small"/>
+                    <TextField margin="normal" required fullWidth id="firstname" label={t('firstname')} name="firstname" autoComplete="firstname" autoFocus size="small"/>
+                    <TextField margin="normal" required fullWidth id="lastname" label={t('lastname')} name="lastname" autoComplete="lastname" autoFocus size="small"/>
+                    <TextField margin="normal" required fullWidth id="email" label={t('email')} name="email" autoComplete="email" size="small"/>
+                    <TextField margin="normal" required fullWidth name="password" label={t('password')} type="password" id="password" autoComplete="current-password" size="small"/>
+                    <TextField margin="normal" required fullWidth name="password_confirmation" label={t('password_confirm')} type="password" id="password_confirmation" autoComplete="current-password" size="small"/>
 
                     {alert && (<Alert severity="error" sx={{ mb: 2 }}>{alert}</Alert>)}
 
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }}>
-                        Sign Up
+                        {t('sign_up')}
                     </Button>
 
                     <Grid container direction="row" sx={{justifyContent: "space-between"}}>
                         <Grid>
-                            <Link component={RouterLink} to="/login" variant="body2">{"Already have an account? Sign In"}</Link>
+                            <Link component={RouterLink} to="/login" variant="body2">{t('already_have_account')}</Link>
                         </Grid>
                     </Grid>
                 </Box>

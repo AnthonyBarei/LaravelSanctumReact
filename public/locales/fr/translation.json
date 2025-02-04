@@ -1,0 +1,26 @@
+{
+    "sign_up": "S'inscrire",
+    "firstname": "Prénom",
+    "lastname": "Nom de famille",
+    "already_have_account": "Vous avez déjà un compte ? Connectez-vous",
+    "email": "Email",
+    "password": "Mot de passe",
+    "login": "Connexion",
+    "reset_my_password": "Réinitialiser mon mot de passe",
+    "back_to_login": "Retour à la connexion",
+    "reset_password": "Réinitialiser le mot de passe",
+    "password_confirm": "Confirmer le mot de passe",
+    "verify_your_account": "Vérifiez votre compte",
+    "email_verification_sent": "Presque terminé ! Nous vous avons envoyé un email de vérification.",
+    "verify_your_email": "Vous devez vérifier votre adresse email pour vous connecter.",
+    "back_to_home": "Retour à l'accueil",
+    "not_found": "Non trouvé",
+    "email_verified": "Votre email a été vérifié.",
+    "verification_error": "Il y a eu une erreur lors de la vérification.",
+    "verifyEmail": {
+        "loginMessage": "Vous pouvez maintenant <1>vous connecter</1> à votre compte."
+    },
+    "sign_in": "Se connecter",
+    "forgot_password": "Mot de passe oublié ?",
+    "dont_have_account": "Vous n'avez pas de compte ? Inscrivez-vous"
+}

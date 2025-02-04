@@ -1,0 +1,26 @@
+{
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "reset_my_password": "Reset my password",
+    "back_to_login": "Back to login",
+    "reset_password": "Reset password",
+    "password_confirm": "Password confirm",
+    "verify_your_account": "Verify your account",
+    "email_verification_sent": "Almost there! We've sent you a verification email.",
+    "verify_your_email": "You need to verify your email address to log in.",
+    "back_to_home": "Back to home",
+    "not_found": "Not found",
+    "email_verified": "Your email has been verified.",
+    "verification_error": "There was an error in the verification.",
+    "verifyEmail": {
+        "loginMessage": "You can now <1>login</1> into your account."
+    },
+    "sign_in": "Sign In",
+    "forgot_password": "Forgot password?",
+    "dont_have_account": "Don't have an account? Sign Up",
+    "sign_up": "Sign Up",
+    "firstname": "Firstname",
+    "lastname": "Lastname",
+    "already_have_account": "Already have an account? Sign In"
+}
