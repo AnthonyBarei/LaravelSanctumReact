@@ -8,16 +8,6 @@ import SidebarFooterAccountPopover from './SideBarFooterAccount';
 import { Box, Typography } from '@mui/material';
 import Copyright from './Copyright';
 
-function CustomAccount() {
-  return (
-    <Account
-      slotProps={{
-        preview: { slotProps: { avatarIconButton: { sx: { border: '0' } } } },
-      }}
-    />
-  );
-}
-
 export default function Layout() {
   return (
     <DashboardLayout slots={{
