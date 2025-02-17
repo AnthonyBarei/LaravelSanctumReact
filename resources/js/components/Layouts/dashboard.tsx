@@ -3,7 +3,6 @@ import { Outlet } from 'react-router';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import { Account } from '@toolpad/core/Account';
-import SidebarFooter from './SideBarFooter';
 import CustomAppTitle from './CustomAppTitle';
 import SidebarFooterAccountPopover from './SideBarFooterAccount';
 import { Box, Typography } from '@mui/material';
