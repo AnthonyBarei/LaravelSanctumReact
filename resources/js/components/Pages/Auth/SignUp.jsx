@@ -8,17 +8,17 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 // Components
 import Copyright from '../../Layouts/Copyright';
 // Auth
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../AuthContext';
 // Translation
 import { useTranslation } from 'react-i18next';
 
-export default function Register() {
+export default function SignUp() {
     const navigate = useNavigate();
     const { register } = useAuth();
     const [alert, setAlert] = React.useState(false);
     const { t } = useTranslation();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
@@ -30,11 +30,12 @@ export default function Register() {
             password_confirmation: formData.get('password_confirmation'),
         };
 
-        register(registerData).then(() => {
-            navigate('/login');
-        }).catch((error) => {
+        try {
+            await register(registerData);
+            navigate('/sign-in');
+        } catch (error) {
             setAlert(error.message);
-        });
+        }
     };
 
     return (
@@ -62,7 +63,7 @@ export default function Register() {
 
                     <Grid container direction="row" sx={{justifyContent: "space-between"}}>
                         <Grid>
-                            <Link component={RouterLink} to="/login" variant="body2">{t('already_have_account')}</Link>
+                            <Link component={RouterLink} to="/sign-in" variant="body2">{t('already_have_account')}</Link>
                         </Grid>
                     </Grid>
                 </Box>

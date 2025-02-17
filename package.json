@@ -1,31 +1,41 @@
 {
+    "name": "default-laravel-react-toolpad-app",
+    "version": "0.1.0",
     "private": true,
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
-    },
-    "devDependencies": {
-        "autoprefixer": "^10.4.20",
-        "axios": "latest",
-        "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "latest",
-        "postcss": "^8.4.47",
-        "react": "latest",
-        "react-dom": "latest",
-        "vite": "latest"
+        "dev": "vite",
+        "preview": "vite preview"
     },
     "dependencies": {
-        "@emotion/react": "latest",
-        "@emotion/styled": "latest",
-        "@mui/icons-material": "latest",
-        "@mui/material": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "react-router": "latest",
+        "@toolpad/core": "^0.12.0",
+        "@mui/material": "^6.4.4",
+        "@mui/icons-material": "^6.4.4",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "firebase": "^11",
         "@vitejs/plugin-react": "^4.3.4",
         "i18next": "latest",
         "i18next-browser-languagedetector": "latest",
         "i18next-http-backend": "latest",
         "react-i18next": "latest",
         "react-router-dom": "latest"
-
+    },
+    "devDependencies": {
+        "typescript":"^5",
+        "@types/react":"^18",
+        "@types/react-dom":"^18",
+        "eslint":"^8",
+        "@vitejs/plugin-react":"^4.3.2",
+        "autoprefixer": "^10.4.20",
+        "axios": "latest",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "latest",
+        "postcss": "^8.4.47",
+        "vite": "latest"
     }
 }

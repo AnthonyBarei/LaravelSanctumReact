@@ -1,39 +1,81 @@
 import axios from 'axios';
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { onAuthStateChanged } from './authObserver';
+
+export interface User {
+    id: number | null;
+    name: string | null;
+    email: string | null;
+    token: string | null;
+    is_admin: number;
+    client_id: number | null;
+}
+
+interface AuthContextType {
+    authed: boolean;
+    setAuthed: (authed: boolean) => void;
+    loading: boolean;
+    session: User | null;
+    login: (data: object) => Promise<void>;
+    logout: (config?: object) => Promise<void>;
+    register: (data: object) => Promise<void>;
+    verify: (data: object) => Promise<void>;
+    handleErrors: (status: number, message: string) => void;
+}
 
 // Create the context
-const AuthContext = createContext({
+const AuthContext = createContext<AuthContextType>({
     authed: false,
-    setAuthed: (authed: boolean) => {},
+    setAuthed: () => {},
     loading: true,
-    user: {},
-    login: (data: object) => {},
-    logout: (config: object) => {},
-    register: (config: object) => {},
-    verify: (data: object) => {},
-    handleErrors: (status: number, message: string) => {},
+    session: null,
+    login: async () => {},
+    logout: async () => {},
+    register: async () => {},
+    verify: async () => {},
+    handleErrors: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
-    // Using the useState hook to keep track of the value authed (if a user is logged in)
     const [authed, setAuthed] = useState<boolean>(false);
-    // Store new value to indicate the call has not finished. Default to true
     const [loading, setLoading] = useState<boolean>(true);
-    // A state that defines user values (email, name, token, is_admin)
-    const [user, setUser] = useState({
-        id: null,
-        name: null,
-        email: null,
-        token: null,
-        is_admin: 0,
-        client_id: null,
+    const [session, setSession] = useState<User | null>(() => {
+        const savedSession = localStorage.getItem('session');
+        return savedSession ? JSON.parse(savedSession) : null;
     });
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Runs once when the component first mounts
-    useEffect(() => { loginCheck(); }, []);
+    useEffect(() => {
+        if (session) {
+            setAuthed(true);
+            setLoading(false);
+        } else {
+            const unsubscribe = onAuthStateChanged((user) => {
+                if (user) {
+                    const newSession = {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        token: user.token,
+                        is_admin: user.is_admin,
+                        client_id: user.client_id,
+                    };
+                    setSession(newSession);
+                    localStorage.setItem('session', JSON.stringify(newSession));
+                    setAuthed(true);
+                } else {
+                    setSession(null);
+                    localStorage.removeItem('session');
+                    setAuthed(false);
+                }
+                setLoading(false);
+            });
+
+            return () => unsubscribe();
+        }
+    }, [session]);
 
     const handleErrors = (status: number, message: string) => {
         if (status === 401 && message == "errors.unauthenticated") {
@@ -43,32 +85,6 @@ export const AuthProvider = ({ children }) => {
             logout();
         }
     }
-
-    /* ** Async Promises functions ** */
-    const loginCheck = async (): Promise<void> => {
-        await loginCheckAsync().then((logged) => {
-            if (logged) {
-                initUser();
-            }
-        }).catch((error) => {
-            setAuthed(false);
-            setLoading(false);
-        });
-    };
-
-    const initUser = async (): Promise<void> => {
-        const config = { headers: { 'Authorization': 'Bearer ' + user.token }, };
-
-        await initUserAsync(config).then((activeUser) => {
-            if (activeUser) {
-                setAuthed(true);
-                setLoading(false);
-            }
-        }).catch((error) => {
-            setAuthed(false);
-            setLoading(false);
-        });
-    };
 
     const login = async (data: object): Promise<void> => {
         await loginAsync(data).then((logged_in) => {
@@ -85,14 +101,16 @@ export const AuthProvider = ({ children }) => {
         navigate(from, { replace: true });
     };
 
-    const logout = async (config: object={headers: {'Authorization': 'Bearer ' + user.token}}): Promise<void> => {
+    const logout = async (config: object={headers: {'Authorization': 'Bearer ' + session?.token}}): Promise<void> => {
         await logoutAsync(config).then((logged_out) => {
             if (logged_out) {
                 setAuthed(false);
+                setSession(null);
+                localStorage.removeItem('session');
                 logoutCallback();
             }
         }).catch((error) => {
-            if (!user.token) {
+            if (!session?.token) {
                 throw new Error('Token not found.');
             } else {
                 throw new Error(error);
@@ -118,12 +136,8 @@ export const AuthProvider = ({ children }) => {
         })
     };
 
-    /* ** Async API calls functions ** */
-
-    // Mock call to an authentication endpoint
     const loginCheckAsync = async (): Promise<string> => {
         return new Promise((resolve, reject) => {
-            // get localstorage lang if exists
             const lang = localStorage.getItem('i18nextLng') === 'fr-FR' ? 'fr' : 'en';
 
             axios.get('/api/authenticated', { params: { lang: lang} }).then((response) => {
@@ -131,17 +145,14 @@ export const AuthProvider = ({ children }) => {
                 resolve(resp.message);
             }).catch((error) => {
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     const resp = error.response.data;
 
                     if (resp.success === false) {
-                        // print error message here
                         reject(resp.data.error);
                     } else {
                         console.log(resp);
                     }
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     reject(error.message);
                 }
             });
@@ -152,7 +163,8 @@ export const AuthProvider = ({ children }) => {
         return new Promise((resolve, reject) => {
             axios.get('/api/me', config).then((response) => {
                 let resp = response.data;
-                setUser(resp.user);
+                setSession(resp.user);
+                localStorage.setItem('session', JSON.stringify(resp.user));
                 resolve(resp.message);
             }).catch((error) => {
                 console.log(error);
@@ -160,33 +172,29 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    // Mock Async Login API call.
     const loginAsync = async (data: object): Promise<string> => {
         return new Promise((resolve, reject) => {
             axios.post('/api/login', data).then((response) => {
                 let resp = response.data;
-                setUser(resp.data);
+                setSession(resp.data);
+                localStorage.setItem('session', JSON.stringify(resp.data));
                 resolve(resp.message);
             }).catch((error) => {
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     var resp = error.response.data;
 
                     if (resp.success === false) {
-                        // print error message here
                         reject(resp.data.error);
                     } else {
                         console.log(resp);
                     }
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     reject(error.message);
                 }
             });
         });
     };
 
-    // Mock Async Logout API call.
     const logoutAsync = async (config: object): Promise<string> => {
         return new Promise((resolve, reject) => {
             axios.post('/api/logout', config).then((response) => {
@@ -195,11 +203,9 @@ export const AuthProvider = ({ children }) => {
             }).catch((error) => {
                 console.log(error);
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     const resp = error.response.data;
 
                     if (resp.success === false) {
-                        // print error message here
                         reject(resp.data.error);
                     } else {
                         if (resp.message) {
@@ -209,7 +215,6 @@ export const AuthProvider = ({ children }) => {
                         }
                     }
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     reject(error.message);
                 }
             });
@@ -220,21 +225,19 @@ export const AuthProvider = ({ children }) => {
         return new Promise((resolve, reject) => {
             axios.post('/api/register', data).then((response) => {
                 let resp = response.data;
-                setUser(resp.data);
+                setSession(resp.data);
+                localStorage.setItem('session', JSON.stringify(resp.data));
                 resolve(resp.message);
             }).catch((error) => {
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     let resp = error.response.data;
 
                     if (resp.success === false) {
-                        // print error message here
                         reject(resp.data[Object.keys(resp.data)[0]][0]);
                     } else {
                         console.log(resp);
                     }
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     reject(error.message);
                 }
             });
@@ -248,17 +251,14 @@ export const AuthProvider = ({ children }) => {
                 resolve(resp.message);
             }).catch((error) => {
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     let resp = error.response.data;
 
                     if (resp.success === false) {
-                        // print error message here
                         reject(resp.data[Object.keys(resp.data)[0]][0]);
                     } else {
                         console.log(resp);
                     }
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     reject(error.message);
                 }
             });
@@ -266,12 +266,10 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        // Using the provider so that ANY component in our application can use the values that we are sending.
-        <AuthContext.Provider value={{ authed, setAuthed, loading, user, login, logout, register, verify, handleErrors }}>
+        <AuthContext.Provider value={{ authed, setAuthed, loading, session, login, logout, register, verify, handleErrors }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-// Finally creating the custom hook
 export const useAuth = () => useContext(AuthContext);

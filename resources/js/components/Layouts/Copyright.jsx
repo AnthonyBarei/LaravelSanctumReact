@@ -3,13 +3,12 @@ import Link from '@mui/material/Link';
 
 const Copyright = (props) => {
     return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
+        <Typography variant="caption" color="textSecondary" align="center" {...props}>
+            {'Copyright © '}{new Date().getFullYear()}{' '}
+            <Link color="inherit" href="https://www.linkedin.com/in/anthony-barei-768b76144/">
                 Anthony Barei
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
+            </Link>{'. '}
+             All rights reserved.
         </Typography>
     );
 }

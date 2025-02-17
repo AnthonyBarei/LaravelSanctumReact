@@ -8,7 +8,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 // Components
 import Copyright from '../../Layouts/Copyright';
 // Auth
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../AuthContext';
 // Translations
 import { useTranslation } from 'react-i18next';
 // utils

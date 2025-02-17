@@ -1,22 +1,15 @@
-// React
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-// MUI
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import DraftsIcon from '@mui/icons-material/Drafts';
-// Components
 import Copyright from '../../Layouts/Copyright';
-// Auth
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../AuthContext';
 import { Link } from '@mui/material';
-
 import { useTranslation, Trans } from 'react-i18next';
-
 
 export default function VerifyEmail() {
     const { token } = useParams();
@@ -24,21 +17,25 @@ export default function VerifyEmail() {
     const { verify } = useAuth();
     const { t } = useTranslation();
 
-    verify({token}).then(() => { setVerified(true) }).catch((error) => { setVerified('error'); });
+    useEffect(() => {
+        verify({ token })
+            .then(() => setVerified(true))
+            .catch(() => setVerified('error'));
+    }, [token, verify]);
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <Box
-            sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
             >
                 <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <DraftsIcon/>
+                    <DraftsIcon />
                 </Avatar>
                 {verified && (
                     <>

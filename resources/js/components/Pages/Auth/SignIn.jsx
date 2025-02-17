@@ -9,11 +9,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 // Components
 import Copyright from '../../Layouts/Copyright';
 // Auth
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../AuthContext';
 // Translation
 import { useTranslation } from 'react-i18next';
 
-export default function Login() {
+export default function SignIn() {
     const location = useLocation();
     const navigate = useNavigate();
     const { authed, login } = useAuth();
@@ -25,9 +25,9 @@ export default function Login() {
         navigate(from, { replace: true });
     }
 
-    React.useEffect(() => { if (authed) authenticatedCallback(); }, []);
+    React.useEffect(() => { if (authed) authenticatedCallback(); }, [authed]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
@@ -36,10 +36,13 @@ export default function Login() {
             password: formData.get('password'),
         };
 
-        login(loginCredentials).then(authenticatedCallback).catch((error) => {
+        try {
+            await login(loginCredentials);
+            authenticatedCallback();
+        } catch (error) {
             console.log(error.message);
             setAlert(error.message);
-        });
+        }
     };
 
     return (
@@ -69,7 +72,7 @@ export default function Login() {
                             <Link component={RouterLink} to="/forgot-password" variant="body2">{t('forgot_password')}</Link>
                         </Grid>
                         <Grid>
-                            <Link component={RouterLink} to="/register" variant="body2">{t('dont_have_account')}</Link>
+                            <Link component={RouterLink} to="/sign-up" variant="body2">{t('dont_have_account')}</Link>
                         </Grid>
                     </Grid>
                 </Box>
